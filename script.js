@@ -5,11 +5,11 @@
    ================================================================ */
 
 const INVITATION_CONFIG = Object.freeze({
-  groomName: "أيمن", // [GROOM_NAME_AR]
-  brideName: "ماسة", // [BRIDE_NAME_AR]
-  groomNameEn: "Ayman", // [GROOM_NAME_EN]
-  brideNameEn: "Massa", // [BRIDE_NAME_EN]
-  eventTitle: "حكاية أيمن وماسة", // [EVENT_TITLE]
+  groomName: "آدم", // [GROOM_NAME_AR]
+  brideName: "ليان", // [BRIDE_NAME_AR]
+  groomNameEn: "Adam", // [GROOM_NAME_EN]
+  brideNameEn: "Layan", // [BRIDE_NAME_EN]
+  eventTitle: "حكاية آدم وليان", // [EVENT_TITLE]
   eventDate: "2026-09-20T16:00:00+03:00", // [EVENT_DATE]
   eventDayNumber: "20",
   eventMonth: "أيلول",
@@ -52,14 +52,24 @@ let countdownTimer = null;
 let scrollFrame = 0;
 let scratchResizeFrame = 0;
 let confettiFrame = 0;
-let gardenJourneyFrame = 0;
-let cancelGardenJourney = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   initApp().catch(handleInitFailure);
 }, { once: true });
 
 async function initApp() {
+  const loaderWasSeen = document.documentElement.classList.contains("loader-seen");
+  const loader = document.getElementById("loader");
+
+  if (loaderWasSeen) {
+    document.body.classList.remove("is-loading");
+    loader?.remove();
+  } else {
+    try {
+      localStorage.setItem("secretGardenLoaderSeen:v1", "1");
+    } catch (_) {}
+  }
+
   document.body.classList.add("is-locked");
   document.documentElement.classList.add("is-locked");
   initReducedMotion();
@@ -75,10 +85,13 @@ async function initApp() {
   document.body.classList.add("app-ready");
   await preloadCriticalAssets();
 
-  window.setTimeout(() => {
-    document.body.classList.remove("is-loading");
-    document.getElementById("loader")?.setAttribute("aria-hidden", "true");
-  }, appState.reducedMotion ? 80 : 520);
+  if (!loaderWasSeen) {
+    window.setTimeout(() => {
+      document.body.classList.remove("is-loading");
+      loader?.setAttribute("aria-hidden", "true");
+      window.setTimeout(() => loader?.remove(), appState.reducedMotion ? 20 : 720);
+    }, appState.reducedMotion ? 80 : 260);
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -131,8 +144,9 @@ function applyInvitationContent() {
 function handleInitFailure() {
   document.body.classList.remove("is-loading", "is-locked");
   document.documentElement.classList.remove("is-locked");
-  document.getElementById("loader")?.setAttribute("hidden", "");
+  document.getElementById("loader")?.remove();
   setStoryInteractivity(true);
+  revealSpiritualIntro();
 }
 
 async function preloadCriticalAssets() {
@@ -165,6 +179,8 @@ function initGate() {
   const trigger = document.getElementById("gateTrigger");
   const skipLink = document.querySelector(".skip-link");
 
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
   setStoryInteractivity(false);
   trigger?.addEventListener("click", openGate, { once: true });
 
@@ -173,9 +189,10 @@ function initGate() {
 
     event.preventDefault();
     document.body.classList.remove("is-loading");
+    document.getElementById("loader")?.remove();
     appState.gateOpened = true;
     document.getElementById("gateScene")?.classList.add("is-opening", "is-camera-push");
-    finishGateEntry({ scrollToGarden: false });
+    finishGateEntry({ focusGarden: false });
 
     const target = document.getElementById("invitationMessage");
     target?.scrollIntoView({ behavior: "auto", block: "start" });
@@ -198,14 +215,14 @@ function openGate() {
   if (status) status.textContent = "تُفتح بوابة الحديقة الآن.";
 
   if (!appState.reducedMotion) {
-    scheduleGateTask(() => scene?.classList.add("is-camera-push"), 1120);
+    scheduleGateTask(() => scene?.classList.add("is-camera-push"), 560);
   }
 
-  const entryDelay = appState.reducedMotion ? 680 : 3180;
-  scheduleGateTask(() => finishGateEntry({ scrollToGarden: true }), entryDelay);
+  const entryDelay = appState.reducedMotion ? 620 : 1450;
+  scheduleGateTask(() => finishGateEntry({ focusGarden: true }), entryDelay);
 }
 
-function finishGateEntry({ scrollToGarden }) {
+function finishGateEntry({ focusGarden }) {
   if (appState.enteredGarden) return;
 
   appState.enteredGarden = true;
@@ -217,75 +234,14 @@ function finishGateEntry({ scrollToGarden }) {
   document.body.classList.remove("is-locked");
   document.documentElement.classList.remove("is-locked");
   setStoryInteractivity(true);
+  revealSpiritualIntro();
   if (status) status.textContent = "فُتحت البوابة. أنتم الآن داخل الحديقة.";
 
-  if (scrollToGarden) {
-    const garden = document.getElementById("gardenWalk");
-    window.setTimeout(() => {
-      document.documentElement.classList.add("is-cinematic-scrolling");
-      garden?.scrollIntoView({
-        behavior: "auto",
-        block: "start",
-      });
-
-      if (appState.reducedMotion) {
-        document.documentElement.classList.remove("is-cinematic-scrolling");
-        focusGardenArrival();
-      } else if (garden) {
-        window.requestAnimationFrame(() => startGardenJourney(garden));
-      }
-    }, appState.reducedMotion ? 40 : 70);
-  }
+  if (focusGarden) window.setTimeout(focusGardenArrival, 40);
 }
 
-function startGardenJourney(garden) {
-  cancelGardenJourney?.();
-
-  const startY = window.scrollY;
-  const targetY = Math.min(
-    document.documentElement.scrollHeight - window.innerHeight,
-    garden.offsetTop + window.innerHeight * 0.72,
-  );
-  const distance = Math.max(0, targetY - startY);
-  const duration = 2850;
-  let startTime = 0;
-  let completed = false;
-
-  const cleanup = (shouldFocus = false) => {
-    if (completed) return;
-    completed = true;
-    if (gardenJourneyFrame) window.cancelAnimationFrame(gardenJourneyFrame);
-    gardenJourneyFrame = 0;
-    cancelGardenJourney = null;
-    document.documentElement.classList.remove("is-cinematic-scrolling");
-    window.removeEventListener("wheel", interrupt, false);
-    document.removeEventListener("pointerdown", interrupt, false);
-    document.removeEventListener("touchstart", interrupt, false);
-    document.removeEventListener("keydown", interrupt, false);
-    if (shouldFocus) focusGardenArrival();
-  };
-
-  const interrupt = () => cleanup(false);
-  cancelGardenJourney = interrupt;
-  window.addEventListener("wheel", interrupt, { passive: true });
-  document.addEventListener("pointerdown", interrupt, { passive: true });
-  document.addEventListener("touchstart", interrupt, { passive: true });
-  document.addEventListener("keydown", interrupt);
-
-  const step = (time) => {
-    if (!startTime) startTime = time;
-    const progress = clamp((time - startTime) / duration, 0, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    window.scrollTo(0, startY + distance * eased);
-
-    if (progress < 1) {
-      gardenJourneyFrame = window.requestAnimationFrame(step);
-    } else {
-      cleanup(true);
-    }
-  };
-
-  gardenJourneyFrame = window.requestAnimationFrame(step);
+function revealSpiritualIntro() {
+  document.querySelector("[data-spiritual-intro]")?.classList.add("is-reading");
 }
 
 function focusGardenArrival() {
@@ -534,35 +490,35 @@ function drawScratchCoating(context, width, height) {
   context.clip();
 
   const coating = context.createLinearGradient(0, 0, width, height);
-  coating.addColorStop(0, "#f6ecdc");
-  coating.addColorStop(0.36, "#d9b9ae");
-  coating.addColorStop(0.7, "#c7a078");
-  coating.addColorStop(1, "#ead9c4");
+  coating.addColorStop(0, "#1c3426");
+  coating.addColorStop(0.34, "#506b55");
+  coating.addColorStop(0.68, "#a58a66");
+  coating.addColorStop(1, "#203a2b");
   context.fillStyle = coating;
   context.fillRect(0, 0, width, height);
 
   const sheen = context.createRadialGradient(width * 0.34, height * 0.2, 1, width * 0.4, height * 0.3, width * 0.68);
-  sheen.addColorStop(0, "rgba(255,255,255,0.42)");
-  sheen.addColorStop(0.48, "rgba(255,255,255,0.05)");
-  sheen.addColorStop(1, "rgba(75,50,35,0.14)");
+  sheen.addColorStop(0, "rgba(255,239,205,0.46)");
+  sheen.addColorStop(0.44, "rgba(221,198,153,0.08)");
+  sheen.addColorStop(1, "rgba(4,18,10,0.28)");
   context.fillStyle = sheen;
   context.fillRect(0, 0, width, height);
 
-  // Fine deterministic paper grain; it is redrawn only on resize.
-  context.globalAlpha = 0.16;
+  // Fine deterministic forest shimmer; it is redrawn only on resize.
+  context.globalAlpha = 0.2;
   for (let index = 0; index < 90; index += 1) {
     const x = ((index * 47) % 97) / 97 * width;
     const y = ((index * 71) % 101) / 101 * height;
     const radius = 0.4 + (index % 3) * 0.35;
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
-    context.fillStyle = index % 2 ? "#fffaf0" : "#7e5f4b";
+    context.fillStyle = index % 2 ? "#f1d9ad" : "#10271a";
     context.fill();
   }
 
-  context.globalAlpha = 0.52;
-  context.strokeStyle = "rgba(117,84,58,0.42)";
-  context.lineWidth = 1;
+  context.globalAlpha = 0.68;
+  context.strokeStyle = "rgba(223,194,145,0.58)";
+  context.lineWidth = 1.2;
   traceHeartPath(context, width * 0.88, height * 0.88, width * 0.06, height * 0.055);
   context.stroke();
   context.restore();
@@ -1293,13 +1249,12 @@ function initReducedMotion() {
     document.body.classList.toggle("reduced-motion", matches);
 
     if (matches) {
-      cancelGardenJourney?.();
       document.getElementById("screenCelebration")?.classList.remove("is-playing", "is-popped");
       stopConfetti();
     }
 
     if (matches && appState.gateOpened && !appState.enteredGarden) {
-      finishGateEntry({ scrollToGarden: true });
+      finishGateEntry({ focusGarden: true });
     }
   };
 

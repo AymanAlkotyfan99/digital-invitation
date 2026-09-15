@@ -6,9 +6,17 @@
     <meta name="theme-color" content="#26392d" />
     <meta
       name="description"
-      content="دعوة رقمية تفاعلية إلى حكاية أيمن وماسة في الحديقة السرية."
+      content="دعوة رقمية تفاعلية إلى حكاية آدم وليان في الحديقة السرية."
     />
-    <title>حكاية أيمن وماسة</title>
+    <title>حكاية آدم وليان</title>
+
+    <script>
+      try {
+        if (localStorage.getItem("secretGardenLoaderSeen:v1") === "1") {
+          document.documentElement.classList.add("loader-seen");
+        }
+      } catch (_) {}
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -92,12 +100,6 @@
     <main id="mainContent">
       <!-- Scene 01 · The closed gate -->
       <section class="gate-scene" id="gateScene" aria-labelledby="gateTitle">
-        <div class="gate-scene__garden" aria-hidden="true">
-          <div class="gate-scene__sun"></div>
-          <div class="gate-scene__haze"></div>
-          <div class="gate-scene__path"></div>
-        </div>
-
         <div class="light-motes" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i></i><i></i>
         </div>
@@ -211,12 +213,18 @@
         <div class="garden-side garden-side--right" data-parallax="-0.07" aria-hidden="true"></div>
 
         <div class="garden-intro" aria-labelledby="gardenTitle">
-          <p class="walkthrough-whisper">اتبعوا الضوء بين الورد...</p>
-          <span class="walkthrough-line" aria-hidden="true"></span>
-          <header class="garden-arrival chapter-heading" data-reveal>
-            <p class="eyebrow">وصلتم إلى قلب الحديقة</p>
-            <h1 id="gardenTitle">هنا... تبدأ الدعوة</h1>
-            <span class="botanical-mark" aria-hidden="true"></span>
+          <header class="garden-spiritual" data-spiritual-intro>
+            <p class="basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+            <blockquote cite="https://quran.com/ar/ar-rum/21">
+              <p>
+                <span class="verse-phrase">﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا</span>
+                <span class="verse-phrase">لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ</span>
+                <span class="verse-phrase">إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ ﴾</span>
+              </p>
+              <cite>سورة الروم · الآية ٢١</cite>
+            </blockquote>
+            <span class="spiritual-divider" aria-hidden="true"></span>
+            <h1 id="gardenTitle">ومن المودّة... تبدأ الحكاية</h1>
           </header>
         </div>
 
@@ -225,40 +233,43 @@
             <div class="envelope__back"></div>
             <div class="envelope__flap"></div>
             <div class="envelope__front"></div>
-            <div class="envelope__emboss" data-initials="أ · م"></div>
+            <div class="envelope__emboss" data-initials="آ · ل"></div>
           </div>
 
-          <article class="invitation-paper" aria-labelledby="discoveryTitle">
+          <article class="invitation-paper discovery-clearing" aria-labelledby="discoveryTitle">
+            <div class="clearing-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="paper-ornament paper-ornament--top" aria-hidden="true"></div>
-            <p class="eyebrow">سرّ الحديقة</p>
-            <h2 id="discoveryTitle">بعض الحكايات<br />لا تبدأ بالكلمات...</h2>
-            <p class="discovery-copy">مرّروا أصابعكم فوق القلب<br />واكتشفوا أصحاب الحكاية</p>
-
-            <div class="celebration" id="celebration" aria-hidden="true">
-              <div class="bouquet bouquet--left">
-                <i class="bouquet__leaf bouquet__leaf--1"></i>
-                <i class="bouquet__leaf bouquet__leaf--2"></i>
-                <b class="bouquet__flower bouquet__flower--1"></b>
-                <b class="bouquet__flower bouquet__flower--2"></b>
-                <b class="bouquet__flower bouquet__flower--3"></b>
-              </div>
-              <div class="bouquet bouquet--right">
-                <i class="bouquet__leaf bouquet__leaf--1"></i>
-                <i class="bouquet__leaf bouquet__leaf--2"></i>
-                <b class="bouquet__flower bouquet__flower--1"></b>
-                <b class="bouquet__flower bouquet__flower--2"></b>
-                <b class="bouquet__flower bouquet__flower--3"></b>
-              </div>
-              <span class="ribbon ribbon--left"></span>
-              <span class="ribbon ribbon--right"></span>
+            <div class="discovery-heading">
+              <p class="eyebrow">سرّ الحديقة</p>
+              <h2 id="discoveryTitle">بعض الحكايات<br />لا تبدأ بالكلمات...</h2>
+              <p class="discovery-copy">مرّروا أصابعكم فوق القلب<br />واكتشفوا أصحاب الحكاية</p>
             </div>
 
             <div class="scratch-wrap" id="scratchWrap">
+              <div class="celebration" id="celebration" aria-hidden="true">
+                <div class="bouquet bouquet--left">
+                  <i class="bouquet__leaf bouquet__leaf--1"></i>
+                  <i class="bouquet__leaf bouquet__leaf--2"></i>
+                  <b class="bouquet__flower bouquet__flower--1"></b>
+                  <b class="bouquet__flower bouquet__flower--2"></b>
+                  <b class="bouquet__flower bouquet__flower--3"></b>
+                </div>
+                <div class="bouquet bouquet--right">
+                  <i class="bouquet__leaf bouquet__leaf--1"></i>
+                  <i class="bouquet__leaf bouquet__leaf--2"></i>
+                  <b class="bouquet__flower bouquet__flower--1"></b>
+                  <b class="bouquet__flower bouquet__flower--2"></b>
+                  <b class="bouquet__flower bouquet__flower--3"></b>
+                </div>
+                <span class="ribbon ribbon--left"></span>
+                <span class="ribbon ribbon--right"></span>
+              </div>
+
               <div class="heart-stage" id="heartStage">
                 <div class="hidden-names" id="hiddenNames" aria-hidden="true">
-                  <span class="name name--groom" data-content="groomName">أيمن</span>
+                  <span class="name name--groom" data-content="groomName">آدم</span>
                   <span class="ampersand" aria-hidden="true">و</span>
-                  <span class="name name--bride" data-content="brideName">ماسة</span>
+                  <span class="name name--bride" data-content="brideName">ليان</span>
                 </div>
                 <canvas
                   id="scratchCanvas"
@@ -343,7 +354,6 @@
           <div class="location-pin" aria-hidden="true"><span></span></div>
           <h2 id="venueTitle" data-content="venueName">حديقة الياسمين</h2>
           <p class="venue-address" data-content="venueAddress">دمشق، سوريا</p>
-          <p class="venue-time" data-content="eventTime">الرابعة مساءً</p>
           <a
             class="ink-link"
             id="mapLink"
@@ -490,31 +500,37 @@
         </div>
       </section>
 
-      <!-- Scene 14 · The open gate -->
+      <!-- Scene 14 · Cinematic epilogue -->
       <section class="ending-scene scene" id="endingScene" aria-labelledby="endingTitle">
-        <div class="ending-scene__stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="ending-media" aria-hidden="true">
+          <img
+            src="assets/images/cinematic-finale-garden.webp"
+            alt=""
+            width="941"
+            height="1672"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="ending-veil" aria-hidden="true"></div>
+
         <div class="ending-copy" data-reveal>
-          <p class="eyebrow">وهكذا لا تُغلق الحديقة أبوابها</p>
+          <p class="eyebrow">
+            <span>الفصل الأخير</span>
+            <b aria-hidden="true">THE FINAL CHAPTER</b>
+          </p>
           <h2 id="endingTitle">
-            <span data-content="groomName">أيمن</span>
-            <i aria-hidden="true">و</i>
-            <span data-content="brideName">ماسة</span>
+            <span data-content="groomName">آدم</span>
+            <i>و</i>
+            <span data-content="brideName">ليان</span>
           </h2>
           <time datetime="2026-09-20" data-content="finalDate">20 · 09 · 2026</time>
-          <p>ننتظركم...<br />لتكتمل الحكاية.</p>
-        </div>
-
-        <div class="distant-gate" aria-hidden="true">
-          <div class="distant-gate__glow"></div>
-          <div class="distant-gate__post distant-gate__post--left"></div>
-          <div class="distant-gate__post distant-gate__post--right"></div>
-          <div class="distant-gate__panel distant-gate__panel--left"><i></i><i></i><i></i></div>
-          <div class="distant-gate__panel distant-gate__panel--right"><i></i><i></i><i></i></div>
+          <p>هذه ليست نهاية الحكاية...<br />بل أول مشهدٍ نكتبه معكم.</p>
         </div>
 
         <footer>
           <span class="botanical-mark botanical-mark--light" aria-hidden="true"></span>
-          <p>صُنعت هذه الدعوة لتبقى ذكرى</p>
+          <p><span data-content="groomName">آدم</span> و<span data-content="brideName">ليان</span> · ذكرى تبدأ من هنا</p>
         </footer>
       </section>
     </main>
