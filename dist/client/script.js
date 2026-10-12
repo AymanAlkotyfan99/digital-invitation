@@ -205,6 +205,7 @@ function openGate() {
   if (appState.gateOpened) return;
 
   appState.gateOpened = true;
+  playInvitationMusic();
   const scene = document.getElementById("gateScene");
   const trigger = document.getElementById("gateTrigger");
   const status = document.getElementById("gateStatus");
@@ -220,6 +221,21 @@ function openGate() {
 
   const entryDelay = appState.reducedMotion ? 620 : 1450;
   scheduleGateTask(() => finishGateEntry({ focusGarden: true }), entryDelay);
+}
+
+function playInvitationMusic() {
+  const music = document.getElementById("invitationMusic");
+  if (!music) return;
+
+  const seekToStart = () => { music.currentTime = 22; };
+  if (music.readyState >= 1) {
+    seekToStart();
+  } else {
+    music.addEventListener("loadedmetadata", seekToStart, { once: true });
+  }
+
+  // Start within the click gesture so mobile browsers allow playback.
+  music.play().catch((error) => console.warn("Invitation music could not play:", error));
 }
 
 function finishGateEntry({ focusGarden }) {
